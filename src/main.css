@@ -1,0 +1,26 @@
+*,
+::before,
+::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    text-shadow: 1px 1px 1px #000;
+    border: none;
+}
+body {
+    font-family: "Fira Sans", sans-serif;
+    font-size: 2rem;
+    line-height: 1.5;
+    background-image: linear-gradient(to top right, #1a7af1, #2b47a0, #1a1a1a);
+}
+html,
+body,
+.container {
+    height: 100%;
+}
+
+#app {
+    height: 89%;
+    margin: 0;
+    padding: 0;
+}
