@@ -43,47 +43,33 @@
     $isAccessible = result.isAccessible;
   }
 
-  function setRgbOne(event: Event) {
-    switch ($asValOne) {
-        case "RGB":
-            const rgbRegex = /r?g?b?\(?(\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?/;
-            const rgbMatch = (event.target as HTMLInputElement).value.match(rgbRegex);
-            if (rgbMatch) {
-                $rgbOne = [parseInt(rgbMatch[1]), parseInt(rgbMatch[2]), parseInt(rgbMatch[3])];
-            }
-            break;
-        case "HSL":
-            const hslRegex = /h?s?l?\(?(\d{1,3}), ?(\d{1,3}\.\d{1,2})%, ?(\d{1,3}\.\d{1,2})%\)?/;
-            const hslMatch = (event.target as HTMLInputElement).value.match(hslRegex);
-            if (hslMatch) {
-                $rgbOne = hslToRgb([parseInt(hslMatch[1]), parseFloat(hslMatch[2]), parseFloat(hslMatch[3])]);
-            }
-            break;
-        default:
-            $rgbOne = hexToRgb((event.target as HTMLInputElement).value);
+  function handleRgbValue(asVal: string, element: HTMLInputElement) {
+    switch (asVal) {
+      case "RGB":
+        const rgbRegex = /r?g?b?\(?(\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?/;
+        const rgbMatch = element.value.match(rgbRegex);
+        if (rgbMatch) {
+          return [parseInt(rgbMatch[1]), parseInt(rgbMatch[2]), parseInt(rgbMatch[3])];
+        }
+        break;
+      case "HSL":
+        const hslRegex = /h?s?l?\(?(\d{1,3}), ?(\d{1,3}\.\d{1,2})%, ?(\d{1,3}\.\d{1,2})%\)?/;
+        const hslMatch = element.value.match(hslRegex);
+        if (hslMatch) {
+          return hslToRgb([parseInt(hslMatch[1]), parseFloat(hslMatch[2]), parseFloat(hslMatch[3])]);
+        }
+        break;
+      default:
+        return hexToRgb(element.value);
     }
-    
-    refreshContrast();
   }
 
-  function setRgbTwo(event: Event) {
-    switch ($asValTwo) {
-        case "RGB":
-            const rgbRegex = /r?g?b?\(?(\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?/;
-            const rgbMatch = (event.target as HTMLInputElement).value.match(rgbRegex);
-            if (rgbMatch) {
-                $rgbTwo = [parseInt(rgbMatch[1]), parseInt(rgbMatch[2]), parseInt(rgbMatch[3])];
-            }
-            break;
-        case "HSL":
-            const hslRegex = /h?s?l?\(?(\d{1,3}), ?(\d{1,3}\.\d{1,2})%, ?(\d{1,3}\.\d{1,2})%\)?/;
-            const hslMatch = (event.target as HTMLInputElement).value.match(hslRegex);
-            if (hslMatch) {
-                $rgbTwo = hslToRgb([parseInt(hslMatch[1]), parseFloat(hslMatch[2]), parseFloat(hslMatch[3])]);
-            }
-            break;
-        default:
-            $rgbTwo = hexToRgb((event.target as HTMLInputElement).value);
+  function handleRgbEvent(event: Event) {
+    const element = (event.target as HTMLInputElement);
+    if (element.id === "rgbOne") {
+        $rgbOne = handleRgbValue($asValOne, element);
+    } else {
+        $rgbTwo = handleRgbValue($asValTwo, element);
     }
     refreshContrast();
   }
@@ -126,7 +112,7 @@
         id="rgbOne"
         name="rgbOne"
         value={rgbToHex($rgbOne)}
-        on:input={setRgbOne}
+        on:input={handleRgbEvent}
       />
       <div class="output-rgb" id="test-text">
         <label class="output-label" for="rgbOneDisplay">Value</label>
@@ -135,7 +121,7 @@
           id="rgbOneDisplay"
           name="rgbOneDisplay"
           value={handleOutputConversion($rgbOne, $asValOne)}
-          on:change={setRgbOne}
+          on:change={handleRgbEvent}
           class="output-inner"
         />
         <select on:change={handleOutputSelect}>
@@ -155,7 +141,7 @@
         id="rgbTwo"
         name="rgbTwo"
         value={rgbToHex($rgbTwo)}
-        on:input={setRgbTwo}
+        on:input={handleRgbEvent}
       />
       <div class="output-rgb" id="test-bg">
         <label class="output-label" for="rgbTwoDisplay">Value</label>
@@ -164,7 +150,7 @@
           id="rgbTwoDisplay"
           name="rgbTwoDisplay"
           value={handleOutputConversion($rgbTwo, $asValTwo)}
-          on:change={setRgbTwo}
+          on:change={handleRgbEvent}
           class="output-inner"
         />
         <select on:change={handleOutputSelect}>
