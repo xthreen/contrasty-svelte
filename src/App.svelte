@@ -5,6 +5,7 @@
     hexToRgb,
     rgbToHex,
     rgbToHsl,
+    hslToRgb,
     calculate,
   } from "./lib/contrast-utils";
   import "./app.css";
@@ -43,12 +44,47 @@
   }
 
   function setRgbOne(event: Event) {
-    $rgbOne = hexToRgb((event.target as HTMLInputElement).value);
+    switch ($asValOne) {
+        case "RGB":
+            const rgbRegex = /r?g?b?\(?(\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?/;
+            const rgbMatch = (event.target as HTMLInputElement).value.match(rgbRegex);
+            if (rgbMatch) {
+                $rgbOne = [parseInt(rgbMatch[1]), parseInt(rgbMatch[2]), parseInt(rgbMatch[3])];
+            }
+            break;
+        case "HSL":
+            const hslRegex = /h?s?l?\(?(\d{1,3}), ?(\d{1,3}\.\d{1,2})%, ?(\d{1,3}\.\d{1,2})%\)?/;
+            const hslMatch = (event.target as HTMLInputElement).value.match(hslRegex);
+            if (hslMatch) {
+                $rgbOne = hslToRgb([parseInt(hslMatch[1]), parseFloat(hslMatch[2]), parseFloat(hslMatch[3])]);
+            }
+            break;
+        default:
+            $rgbOne = hexToRgb((event.target as HTMLInputElement).value);
+    }
+    
     refreshContrast();
   }
 
   function setRgbTwo(event: Event) {
-    $rgbTwo = hexToRgb((event.target as HTMLInputElement).value);
+    switch ($asValTwo) {
+        case "RGB":
+            const rgbRegex = /r?g?b?\(?(\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?/;
+            const rgbMatch = (event.target as HTMLInputElement).value.match(rgbRegex);
+            if (rgbMatch) {
+                $rgbTwo = [parseInt(rgbMatch[1]), parseInt(rgbMatch[2]), parseInt(rgbMatch[3])];
+            }
+            break;
+        case "HSL":
+            const hslRegex = /h?s?l?\(?(\d{1,3}), ?(\d{1,3}\.\d{1,2})%, ?(\d{1,3}\.\d{1,2})%\)?/;
+            const hslMatch = (event.target as HTMLInputElement).value.match(hslRegex);
+            if (hslMatch) {
+                $rgbTwo = hslToRgb([parseInt(hslMatch[1]), parseFloat(hslMatch[2]), parseFloat(hslMatch[3])]);
+            }
+            break;
+        default:
+            $rgbTwo = hexToRgb((event.target as HTMLInputElement).value);
+    }
     refreshContrast();
   }
 

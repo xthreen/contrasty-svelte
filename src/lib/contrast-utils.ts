@@ -50,6 +50,65 @@ function rgbToHsl(rgb: number[]) {
 
   return [H * 60, S * 100, L * 100];
 }
+// src/lib/contrast-utils.test.ts > hslToRgb
+// AssertionError: expected [ 3, 3, 3 ] to deeply equal [ 255, 255, 255 ]
+
+// - Expected
+// + Received
+
+//   Array [
+// -   255,
+// -   255,
+// -   255,
+// +   3,
+// +   3,
+// +   3,
+//   ]
+// 
+// ❯ src/lib/contrast-utils.test.ts:25:33
+//      23| test("hslToRgb", () => {
+//      24|     expect(hslToRgb([0, 0, 0])).toEqual([0, 0, 0]);
+//      25|     expect(hslToRgb([0, 0, 1])).toEqual([255, 255, 255]);
+
+function hslToRgb(hsl: number[]) {
+    const [h, s, l] = hsl;
+    const [H, S, L] = [h / 360, s / 100, l / 100];
+    let R = 0;
+    let G = 0;
+    let B = 0;
+
+    if (S === 0) {
+        R = G = B = L;
+    } else {
+        const q = L < 0.5 ? L * (1 + S) : L + S - L * S;
+        const p = 2 * L - q;
+        R = hueToRgb(p, q, H + 1 / 3);
+        G = hueToRgb(p, q, H);
+        B = hueToRgb(p, q, H - 1 / 3);
+    }
+
+    return [Math.round(R * 255), Math.round(G * 255), Math.round(B * 255)];
+}
+
+function hueToRgb(p: number, q: number, t: number) {
+    let T = t;
+    if (T < 0) {
+        T += 1;
+    }
+    if (T > 1) {
+        T -= 1;
+    }
+    if (T < 1 / 6) {
+        return p + (q - p) * 6 * T;
+    }
+    if (T < 1 / 2) {
+        return q;
+    }
+    if (T < 2 / 3) {
+        return p + (q - p) * (2 / 3 - T) * 6;
+    }
+    return p;
+}
 
 function toLinear(col: number) {
   const color = col / 255.0;
@@ -92,6 +151,8 @@ function calculate(rgbOne: number[], rgbTwo: number[], textSize: string) {
 
 export {
     hexToRgb,
+    hslToRgb,
+    hueToRgb,
     rgbToHex,
     rgbToHsl,
     toLinear,
