@@ -1,7 +1,7 @@
 <script lang="ts">
   import { partytownSnippet } from "@builder.io/partytown/integration/index.mjs";
   import { writable } from "svelte/store";
-  import {onMount, tick} from "svelte";
+  import { onMount, tick } from "svelte";
   import {
     hexToRgb,
     rgbToHex,
@@ -46,57 +46,58 @@
 
   async function handleRgbValue(asVal: string, element: HTMLInputElement) {
     if (asVal === "RGB") {
-        const rgbRegex = /(?:rgb\()?(\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?/;
-        const rgbMatch = element.value.match(rgbRegex);
-        await tick();
-        if (rgbMatch) {
-            return [
-            parseInt(rgbMatch[1]),
-            parseInt(rgbMatch[2]),
-            parseInt(rgbMatch[3]),
-            ];
-        }
+      const rgbRegex = /(?:rgb\()?(\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?/;
+      const rgbMatch = element.value.match(rgbRegex);
+      await tick();
+      if (rgbMatch) {
+        return [
+          parseInt(rgbMatch[1]),
+          parseInt(rgbMatch[2]),
+          parseInt(rgbMatch[3]),
+        ];
+      }
     } else if (asVal === "HSL") {
-        const hslRegex = /(?:hsl\()?(\d{1,3}), ?(\d{1,3}\.?\d{1,2})%?, ?(\d{1,3}\.?\d{1,2})(?:%\))?/;
-        const hslMatch = element.value.match(hslRegex);
-        await tick();
-        if (hslMatch) {
-            return hslToRgb([
-            parseInt(hslMatch[1]),
-            parseFloat(hslMatch[2]),
-            parseFloat(hslMatch[3]),
-            ]);
-        } else {
-            await tick();
-            return hexToRgb(element.value);
-        }
-    } else {
+      const hslRegex =
+        /(?:hsl\()?(\d{1,3}), ?(\d{1,3}\.?\d{1,2})%?, ?(\d{1,3}\.?\d{1,2})(?:%\))?/;
+      const hslMatch = element.value.match(hslRegex);
+      await tick();
+      if (hslMatch) {
+        return hslToRgb([
+          parseInt(hslMatch[1]),
+          parseFloat(hslMatch[2]),
+          parseFloat(hslMatch[3]),
+        ]);
+      } else {
         await tick();
         return hexToRgb(element.value);
+      }
+    } else {
+      await tick();
+      return hexToRgb(element.value);
     }
   }
 
   function handleRgbEvent(event: Event) {
-    const element = (event.target as HTMLInputElement);
+    const element = event.target as HTMLInputElement;
     if (element.id === "rgbOne") {
-        handleRgbValue($asValOne, element).then((val) => {
-          val ? $rgbOne = val : null;
-        });
+      handleRgbValue($asValOne, element).then((val) => {
+        val ? ($rgbOne = val) : null;
+      });
     }
     if (element.id === "rgbTwo") {
-        handleRgbValue($asValTwo, element).then((val) => {
-          val ? $rgbTwo = val : null;
-        });
+      handleRgbValue($asValTwo, element).then((val) => {
+        val ? ($rgbTwo = val) : null;
+      });
     }
     if (element.id === "rgbOneDisplay") {
-        handleRgbValue($asValOne, element).then((val) => {
-          val ? $rgbOne = val : null;
-        });
+      handleRgbValue($asValOne, element).then((val) => {
+        val ? ($rgbOne = val) : null;
+      });
     }
     if (element.id === "rgbTwoDisplay") {
-        handleRgbValue($asValTwo, element).then((val) => {
-          val ? $rgbTwo = val : null;
-        });
+      handleRgbValue($asValTwo, element).then((val) => {
+        val ? ($rgbTwo = val) : null;
+      });
     }
     refreshContrast();
   }
@@ -115,21 +116,21 @@
     }
   }
 </script>
+
 <svelte:window bind:innerWidth={maxWidth} />
+
 <svelte:head>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400&display=swap");
+  </style>
   <script>
-    // noinspection JSUnresolvedReference
     partytown = {
-      forward: ['rgbToHex', 'hexToRgb', 'rgbToHsl', 'hslToRgb', 'calculate']
-    }
+      forward: ["rgbToHex", "hexToRgb", "rgbToHsl", "hslToRgb", "calculate"],
+    };
   </script>
-  {@html '<script>' + partytownSnippet() + '</script>'}
-  <script type="text/partytown">
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&family=Roboto:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
-  </script>
+  {@html "<script>" + partytownSnippet() + "</script>"}
 </svelte:head>
+
 <h1 class="banner">Text Contrast Accessibility</h1>
 <main class="main-grid">
   <div class="color-selector">
