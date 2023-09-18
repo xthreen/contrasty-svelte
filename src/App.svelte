@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { partytownSnippet } from "@builder.io/partytown/integration/index.mjs";
   import { writable } from "svelte/store";
   import {onMount, tick} from "svelte";
   import {
@@ -79,22 +80,22 @@
     const element = (event.target as HTMLInputElement);
     if (element.id === "rgbOne") {
         handleRgbValue($asValOne, element).then((val) => {
-          $rgbOne = val;
+          val ? $rgbOne = val : null;
         });
     }
     if (element.id === "rgbTwo") {
         handleRgbValue($asValTwo, element).then((val) => {
-          $rgbTwo = val;
+          val ? $rgbTwo = val : null;
         });
     }
     if (element.id === "rgbOneDisplay") {
         handleRgbValue($asValOne, element).then((val) => {
-          $rgbOne = val;
+          val ? $rgbOne = val : null;
         });
     }
     if (element.id === "rgbTwoDisplay") {
         handleRgbValue($asValTwo, element).then((val) => {
-          $rgbTwo = val;
+          val ? $rgbTwo = val : null;
         });
     }
     refreshContrast();
@@ -114,8 +115,21 @@
     }
   }
 </script>
-
 <svelte:window bind:innerWidth={maxWidth} />
+<svelte:head>
+  <script>
+    // noinspection JSUnresolvedReference
+    partytown = {
+      forward: ['rgbToHex', 'hexToRgb', 'rgbToHsl', 'hslToRgb', 'calculate']
+    }
+  </script>
+  {@html '<script>' + partytownSnippet() + '</script>'}
+  <script type="text/partytown">
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&family=Roboto:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+  </script>
+</svelte:head>
 <h1 class="banner">Text Contrast Accessibility</h1>
 <main class="main-grid">
   <div class="color-selector">
