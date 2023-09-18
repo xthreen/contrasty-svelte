@@ -50,32 +50,13 @@ function rgbToHsl(rgb: number[]) {
 
   return [H * 60, S * 100, L * 100];
 }
-// src/lib/contrast-utils.test.ts > hslToRgb
-// AssertionError: expected [ 3, 3, 3 ] to deeply equal [ 255, 255, 255 ]
-
-// - Expected
-// + Received
-
-//   Array [
-// -   255,
-// -   255,
-// -   255,
-// +   3,
-// +   3,
-// +   3,
-//   ]
-// 
-// ❯ src/lib/contrast-utils.test.ts:25:33
-//      23| test("hslToRgb", () => {
-//      24|     expect(hslToRgb([0, 0, 0])).toEqual([0, 0, 0]);
-//      25|     expect(hslToRgb([0, 0, 1])).toEqual([255, 255, 255]);
 
 function hslToRgb(hsl: number[]) {
     const [h, s, l] = hsl;
     const [H, S, L] = [h / 360, s / 100, l / 100];
-    let R = 0;
-    let G = 0;
-    let B = 0;
+    let R: number;
+    let G: number;
+    let B: number;
 
     if (S === 0) {
         R = G = B = L;
@@ -135,7 +116,7 @@ function calculate(rgbOne: number[], rgbTwo: number[], textSize: string) {
 
   const ratio = (L2 + 0.05) / (L1 + 0.05);
 
-  let isAccessible = false;
+  let isAccessible: boolean;
 
   if (textSize === "small") {
     isAccessible = ratio >= 3;

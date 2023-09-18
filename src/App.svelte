@@ -1,6 +1,6 @@
 <script lang="ts">
   import { writable } from "svelte/store";
-  import { onMount } from "svelte";
+  import {onMount, tick} from "svelte";
   import {
     hexToRgb,
     rgbToHex,
@@ -43,23 +43,34 @@
     $isAccessible = result.isAccessible;
   }
 
-  function handleRgbValue(asVal: string, element: HTMLInputElement) {
-    switch (asVal) {
-      case "RGB":
-        const rgbRegex = /r?g?b?\(?(\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?/;
+  async function handleRgbValue(asVal: string, element: HTMLInputElement) {
+    if (asVal === "RGB") {
+        const rgbRegex = /(?:rgb\()?(\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?/;
         const rgbMatch = element.value.match(rgbRegex);
+        await tick();
         if (rgbMatch) {
-          return [parseInt(rgbMatch[1]), parseInt(rgbMatch[2]), parseInt(rgbMatch[3])];
+            return [
+            parseInt(rgbMatch[1]),
+            parseInt(rgbMatch[2]),
+            parseInt(rgbMatch[3]),
+            ];
         }
-        break;
-      case "HSL":
-        const hslRegex = /h?s?l?\(?(\d{1,3}), ?(\d{1,3}\.\d{1,2})%, ?(\d{1,3}\.\d{1,2})%\)?/;
+    } else if (asVal === "HSL") {
+        const hslRegex = /(?:hsl\()?(\d{1,3}), ?(\d{1,3}\.?\d{1,2})%?, ?(\d{1,3}\.?\d{1,2})(?:%\))?/;
         const hslMatch = element.value.match(hslRegex);
+        await tick();
         if (hslMatch) {
-          return hslToRgb([parseInt(hslMatch[1]), parseFloat(hslMatch[2]), parseFloat(hslMatch[3])]);
+            return hslToRgb([
+            parseInt(hslMatch[1]),
+            parseFloat(hslMatch[2]),
+            parseFloat(hslMatch[3]),
+            ]);
+        } else {
+            await tick();
+            return hexToRgb(element.value);
         }
-        break;
-      default:
+    } else {
+        await tick();
         return hexToRgb(element.value);
     }
   }
@@ -67,9 +78,24 @@
   function handleRgbEvent(event: Event) {
     const element = (event.target as HTMLInputElement);
     if (element.id === "rgbOne") {
-        $rgbOne = handleRgbValue($asValOne, element);
-    } else {
-        $rgbTwo = handleRgbValue($asValTwo, element);
+        handleRgbValue($asValOne, element).then((val) => {
+          $rgbOne = val;
+        });
+    }
+    if (element.id === "rgbTwo") {
+        handleRgbValue($asValTwo, element).then((val) => {
+          $rgbTwo = val;
+        });
+    }
+    if (element.id === "rgbOneDisplay") {
+        handleRgbValue($asValOne, element).then((val) => {
+          $rgbOne = val;
+        });
+    }
+    if (element.id === "rgbTwoDisplay") {
+        handleRgbValue($asValTwo, element).then((val) => {
+          $rgbTwo = val;
+        });
     }
     refreshContrast();
   }
